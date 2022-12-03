@@ -17,3 +17,29 @@ export const addMessageToChatSchema = yup.object().shape({
     content: yup.string().required(),
   }),
 });
+
+export const getClientSocketByChatIdSchema = yup.object().shape({
+  country: yup.string().required(),
+  language: yup.string().required(),
+  chatId: yup.string().uuid().required(),
+});
+
+export const updateClientSocketByChatIdSchema = yup.object().shape({
+  country: yup.string().required(),
+  language: yup.string().required(),
+  chatId: yup.string().uuid().required(),
+  socketId: yup.string().required(),
+});
+
+export const getProviderSocketByChatIdSchema = yup.object().shape({
+  country: yup.string().required(),
+  language: yup.string().required(),
+  chatId: yup.string().uuid().required(),
+});
+
+export const updateProviderSocketByChatIdSchema = yup.object().shape({
+  country: yup.string().required(),
+  language: yup.string().required(),
+  chatId: yup.string().uuid().required(),
+  socketId: yup.string().required(),
+});
