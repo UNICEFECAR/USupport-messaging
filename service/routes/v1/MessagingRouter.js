@@ -1,5 +1,7 @@
 import express from "express";
 
+import { populateUser } from "#middlewares/populateMiddleware";
+
 import {
   getChatById,
   addMessageToChat,
@@ -39,7 +41,7 @@ router.get("/", async (req, res, next) => {
     .catch(next);
 });
 
-router.put("/", async (req, res, next) => {
+router.put("/", populateUser, async (req, res, next) => {
   /**
    * #route   PUT /messaging/v1/
    * #desc    Add a message to the given chat
@@ -47,7 +49,17 @@ router.put("/", async (req, res, next) => {
   const country = req.header("x-country-alpha-2");
   const language = req.header("x-language-alpha-2");
 
-  const payload = req.body;
+  const user = req.user;
+
+  let payload = req.body;
+
+  if (payload && payload.message) {
+    if (user.type === "client") {
+      payload.message.senderId = user.client_detail_id;
+    } else if (user.type === "provider") {
+      payload.message.senderId = user.provider_detail_id;
+    }
+  }
 
   return await addMessageToChatSchema
     .noUnknown(true)
