@@ -1,14 +1,18 @@
 import {
   getChatByIdQuery,
   addMessageToChatQuery,
-  updateClientSocketByChatIdQuery,
-  updateProviderSocketByChatIdQuery,
+  updateSocketByChatIdQuery,
 } from "#queries/messaging";
 
 import { chatNotFound } from "#utils/errors";
 
-export const getChatById = async ({ country, language, chatId }) => {
-  return await getChatByIdQuery({ poolCountry: country, chatId })
+export const getChatById = async ({
+  country,
+  language,
+  chatId,
+  socketType,
+}) => {
+  const chatData = await getChatByIdQuery({ poolCountry: country, chatId })
     .then((res) => {
       if (res.rowCount === 0) {
         return chatNotFound(language);
@@ -19,6 +23,20 @@ export const getChatById = async ({ country, language, chatId }) => {
     .catch((err) => {
       throw err;
     });
+
+  switch (socketType) {
+    case "provider": {
+      const { provider_socket_id } = chatData;
+      return { provider_socket_id };
+    }
+    case "client": {
+      const { client_socket_id } = chatData;
+      return { client_socket_id };
+    }
+    default: {
+      return chatData;
+    }
+  }
 };
 
 export const addMessageToChat = async ({
@@ -40,81 +58,14 @@ export const addMessageToChat = async ({
     });
 };
 
-export const getClientSocketByChatId = async ({
-  country,
-  language,
-  chatId,
-}) => {
-  return await getChatByIdQuery({ poolCountry: country, chatId })
-    .then((res) => {
-      if (res.rowCount === 0) {
-        return chatNotFound(language);
-      } else {
-        const { client_socket_id } = res.rows[0];
-        return { client_socket_id };
-      }
-    })
-    .catch((err) => {
-      throw err;
-    });
-};
-
-export const updateClientSocketByChatId = async ({
-  country,
-  language,
-  chatId,
-  socketId,
-}) => {
-  return await updateClientSocketByChatIdQuery({
-    poolCountry: country,
-    chatId,
-    socketId,
+export const updateSocketByChatId = async (props) => {
+  return await updateSocketByChatIdQuery({
+    ...props,
+    poolCountry: props.country,
   })
     .then((res) => {
       if (res.rowCount === 0) {
-        return chatNotFound(language);
-      } else {
-        return res.rows[0];
-      }
-    })
-    .catch((err) => {
-      throw err;
-    });
-};
-
-export const getProviderSocketByChatId = async ({
-  country,
-  language,
-  chatId,
-}) => {
-  return await getChatByIdQuery({ poolCountry: country, chatId })
-    .then((res) => {
-      if (res.rowCount === 0) {
-        return chatNotFound(language);
-      } else {
-        const { provider_socket_id } = res.rows[0];
-        return { provider_socket_id };
-      }
-    })
-    .catch((err) => {
-      throw err;
-    });
-};
-
-export const updateProviderSocketByChatId = async ({
-  country,
-  language,
-  chatId,
-  socketId,
-}) => {
-  return await updateProviderSocketByChatIdQuery({
-    poolCountry: country,
-    chatId,
-    socketId,
-  })
-    .then((res) => {
-      if (res.rowCount === 0) {
-        return chatNotFound(language);
+        return chatNotFound(props.language);
       } else {
         return res.rows[0];
       }
