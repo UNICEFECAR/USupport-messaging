@@ -21,32 +21,31 @@ export const addMessageToChatQuery = async ({ poolCountry, chatId, message }) =>
     [chatId, message]
   );
 
-export const updateClientSocketByChatIdQuery = async ({
+export const updateSocketByChatIdQuery = async ({
   poolCountry,
   chatId,
   socketId,
-}) =>
-  await getDBPool("clinicalDb", poolCountry).query(
-    `
+  socketType,
+}) => {
+  if (socketType === "client") {
+    return await getDBPool("clinicalDb", poolCountry).query(
+      `
         UPDATE chat
         SET client_socket_id = $2
         WHERE chat_id = $1
         RETURNING *;
       `,
-    [chatId, socketId]
-  );
-
-export const updateProviderSocketByChatIdQuery = async ({
-  poolCountry,
-  chatId,
-  socketId,
-}) =>
-  await getDBPool("clinicalDb", poolCountry).query(
-    `
+      [chatId, socketId]
+    );
+  } else {
+    return await getDBPool("clinicalDb", poolCountry).query(
+      `
         UPDATE chat
         SET provider_socket_id = $2
         WHERE chat_id = $1
         RETURNING *;
       `,
-    [chatId, socketId]
-  );
+      [chatId, socketId]
+    );
+  }
+};
