@@ -17,11 +17,11 @@ spec:
     spec:
       containers:
       - name: messaging
-        image: {TODO: CHANGE}
+        image: 482053628475.dkr.ecr.eu-central-1.amazonaws.com/usupport-messaging-api
         imagePullPolicy: Always
         envFrom:
         - secretRef:
-          name: messaging-secrets
+            name: messaging-secrets
         - configMapRef:
             name: messaging-config
         ports:

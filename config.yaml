@@ -4,5 +4,5 @@ metadata:
   name: messaging-config
 data:
   NODE_ENV: production
-  PORT: 3006
+  PORT: "3006"
   
