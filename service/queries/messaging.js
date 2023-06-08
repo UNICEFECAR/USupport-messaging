@@ -50,3 +50,19 @@ export const updateProviderSocketByChatIdQuery = async ({
       `,
     [chatId, socketId]
   );
+
+export const getAllChatDataQuery = async ({
+  poolCountry,
+  providerDetailId,
+  clientDetailId,
+}) => {
+  return await getDBPool("clinicalDb", poolCountry).query(
+    `
+        SELECT chat_id, client_detail_id, provider_detail_id, messages, date, client_socket_id, provider_socket_id
+        FROM chat
+        WHERE client_detail_id = $1 AND provider_detail_id = $2
+        ORDER BY created_at ASC
+      `,
+    [clientDetailId, providerDetailId]
+  );
+};

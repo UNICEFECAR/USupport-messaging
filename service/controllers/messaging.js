@@ -3,9 +3,10 @@ import {
   addMessageToChatQuery,
   updateClientSocketByChatIdQuery,
   updateProviderSocketByChatIdQuery,
+  getAllChatDataQuery,
 } from "#queries/messaging";
 
-import { chatNotFound } from "#utils/errors";
+import { chatNotFound, userNotAuthorized } from "#utils/errors";
 
 export const getChatById = async ({ country, language, chatId }) => {
   return await getChatByIdQuery({ poolCountry: country, chatId })
@@ -117,6 +118,42 @@ export const updateProviderSocketByChatId = async ({
         return chatNotFound(language);
       } else {
         return res.rows[0];
+      }
+    })
+    .catch((err) => {
+      throw err;
+    });
+};
+
+export const getAllChatData = async ({
+  country,
+  language,
+  providerDetailId,
+  clientDetailId,
+  requesterId,
+  requestedBy,
+}) => {
+  const clientIdMismatch =
+    requestedBy === "client" && requesterId !== clientDetailId;
+  const providerIdMismatch =
+    requestedBy === "provider" && requesterId !== providerDetailId;
+  if (clientIdMismatch || providerIdMismatch) {
+    throw userNotAuthorized(language);
+  }
+
+  return await getAllChatDataQuery({
+    poolCountry: country,
+    providerDetailId,
+    clientDetailId,
+  })
+    .then((res) => {
+      if (res.rowCount === 0) {
+        return chatNotFound(language);
+      } else {
+        const messages = res.rows.map((x) => x.messages).flat();
+        const result = res.rows[0];
+        result.messages = messages.filter((x) => x !== null);
+        return result;
       }
     })
     .catch((err) => {

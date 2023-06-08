@@ -7,3 +7,11 @@ export const chatNotFound = (language) => {
   error.status = 404;
   return error;
 };
+
+export const userNotAuthorized = (language) => {
+  const error = new Error();
+  error.message = t("user_not_authorized_error", language);
+  error.name = "USER NOT AUTHORIZED";
+  error.status = 401;
+  return error;
+};

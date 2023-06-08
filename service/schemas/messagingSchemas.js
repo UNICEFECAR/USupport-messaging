@@ -43,3 +43,12 @@ export const updateProviderSocketByChatIdSchema = yup.object().shape({
   chatId: yup.string().uuid().required(),
   socketId: yup.string().required(),
 });
+
+export const getAllChatDataSchema = yup.object().shape({
+  country: yup.string().required(),
+  language: yup.string().required(),
+  providerDetailId: yup.string().uuid().required(),
+  clientDetailId: yup.string().uuid().required(),
+  requesterId: yup.string().uuid().required(),
+  requestedBy: yup.string().oneOf(["client", "provider"]).required(),
+});

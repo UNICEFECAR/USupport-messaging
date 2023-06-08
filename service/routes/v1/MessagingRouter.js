@@ -9,6 +9,7 @@ import {
   updateClientSocketByChatId,
   getProviderSocketByChatId,
   updateProviderSocketByChatId,
+  getAllChatData,
 } from "#controllers/messaging";
 
 import {
@@ -18,6 +19,7 @@ import {
   updateClientSocketByChatIdSchema,
   getProviderSocketByChatIdSchema,
   updateProviderSocketByChatIdSchema,
+  getAllChatDataSchema,
 } from "#schemas/messagingSchemas";
 
 const router = express.Router();
@@ -154,6 +156,35 @@ router.put("/provider-socket", async (req, res, next) => {
       ...payload,
     })
     .then(updateProviderSocketByChatId)
+    .then((result) => res.status(200).send(result))
+    .catch(next);
+});
+
+router.get("/all-chat-data", populateUser, async (req, res, next) => {
+  /**
+   * #route   GET /messaging/v1/all-chat-data
+   * #desc    Get all chat data by given provider detail ID and client detail ID
+   */
+  const country = req.header("x-country-alpha-2");
+  const language = req.header("x-language-alpha-2");
+
+  const { providerDetailId, clientDetailId } = req.query;
+  const { client_detail_id, provider_detail_id, type } = req.user;
+
+  const requesterId = type === "client" ? client_detail_id : provider_detail_id;
+
+  return await getAllChatDataSchema
+    .noUnknown(true)
+    .strict(true)
+    .validate({
+      country,
+      language,
+      providerDetailId,
+      clientDetailId,
+      requesterId,
+      requestedBy: type,
+    })
+    .then(getAllChatData)
     .then((result) => res.status(200).send(result))
     .catch(next);
 });
