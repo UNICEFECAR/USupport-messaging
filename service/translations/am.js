@@ -1,0 +1,4 @@
+export default {
+  chat_not_found_error: 'Զրույցը չի գտնվել',
+  user_not_authorized_error: 'Օգտագործողը թույլտվություն չունի',
+};
