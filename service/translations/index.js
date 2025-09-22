@@ -1,10 +1,15 @@
-import en from "./en.js";
-import ru from "./ru.js";
-import kk from "./kk.js";
-import uk from "./uk.js";
-import pl from "./pl.js";
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+
+const en = require('./en.json');
+const hy = require('./hy.json');
+const kk = require('./kk.json');
+const ru = require('./ru.json');
+const pl = require('./pl.json');
+const uk = require('./uk.json');
 
 const translations = {
+  hy,
   en,
   kk,
   ru,
@@ -18,10 +23,10 @@ const translations = {
  * @param {string} language the alpha2 code of the language
  * @returns {string} the translated string
  */
-export function t(key, language = "en") {
+export function t(key, language = 'en') {
   // Make sure the language exists and if not return the default language
   if (!Object.keys(translations).includes(language)) {
-    return translations["en"][key];
+    return translations['en'][key];
   }
   return translations[language][key];
 }
