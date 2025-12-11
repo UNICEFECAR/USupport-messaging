@@ -1,8 +1,15 @@
-import en from "./en.js";
-import ru from "./ru.js";
-import kk from "./kk.js";
-import uk from "./uk.js";
-import pl from "./pl.js";
+// eslint-disable-next-line
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+
+const en = require("./en.json");
+const kk = require("./kk.json");
+const ru = require("./ru.json");
+const pl = require("./pl.json");
+const ro = require("./ro.json");
+const hy = require("./hy.json");
+const uk = require("./uk.json");
+const el = require("./el.json");
 
 const translations = {
   en,
@@ -10,6 +17,9 @@ const translations = {
   ru,
   uk,
   pl,
+  hy,
+  ro,
+  el,
 };
 
 /**
