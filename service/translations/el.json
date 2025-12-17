@@ -1,4 +1,4 @@
 {
-  "chat_not_found_error": "Chat not found",
-  "user_not_authorized_error": "User not authorized"
+  "chat_not_found_error": "Δεν βρέθηκε συνομιλία",
+  "user_not_authorized_error": "Μη εξουσιοδοτημένος χρήστης"
 }
