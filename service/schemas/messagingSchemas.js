@@ -4,6 +4,8 @@ export const getChatByIdSchema = yup.object().shape({
   country: yup.string().required(),
   language: yup.string().required(),
   chatId: yup.string().uuid().required(),
+  limit: yup.number().integer().min(1).max(100).notRequired().nullable(),
+  before: yup.number().integer().min(0).notRequired().nullable(),
 });
 
 export const addMessageToChatSchema = yup.object().shape({

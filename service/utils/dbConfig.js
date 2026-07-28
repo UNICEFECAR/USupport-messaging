@@ -45,10 +45,10 @@ const IS_DEV = process.env.NODE_ENV === "development";
 export const getDBPool = (dbType, country) => {
   if (dbType === "masterDb") return MASTER_PG_POOL;
   else {
-    if (IS_DEV) {
-      if (dbType === "piiDb") return PII_PG_POOL_KZ;
-      else if (dbType === "clinicalDb") return CLINICAL_PG_POOL_KZ;
-    }
+    // if (IS_DEV) {
+    //   if (dbType === "piiDb") return PII_PG_POOL_KZ;
+    //   else if (dbType === "clinicalDb") return CLINICAL_PG_POOL_KZ;
+    // }
 
     switch (country) {
       case "KZ":
