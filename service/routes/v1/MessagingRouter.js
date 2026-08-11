@@ -33,11 +33,17 @@ router.get("/", async (req, res, next) => {
   const language = req.header("x-language-alpha-2");
 
   const chatId = req.query.chatId;
+  const parsedLimit =
+    req.query.limit !== undefined ? Number(req.query.limit) : undefined;
+  const parsedBefore =
+    req.query.before !== undefined ? Number(req.query.before) : undefined;
+  const limit = Number.isFinite(parsedLimit) ? parsedLimit : undefined;
+  const before = Number.isFinite(parsedBefore) ? parsedBefore : undefined;
 
   return await getChatByIdSchema
     .noUnknown(true)
     .strict(true)
-    .validate({ country, language, chatId })
+    .validate({ country, language, chatId, limit, before })
     .then(getChatById)
     .then((result) => res.status(200).send(result))
     .catch(next);

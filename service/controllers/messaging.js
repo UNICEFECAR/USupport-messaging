@@ -8,14 +8,40 @@ import {
 
 import { chatNotFound, userNotAuthorized } from "#utils/errors";
 
-export const getChatById = async ({ country, language, chatId }) => {
+export const getChatById = async ({
+  country,
+  language,
+  chatId,
+  limit,
+  before,
+}) => {
   return await getChatByIdQuery({ poolCountry: country, chatId })
     .then((res) => {
       if (res.rowCount === 0) {
         return chatNotFound(language);
-      } else {
-        return res.rows[0];
       }
+
+      const chat = res.rows[0];
+
+      if (limit == null) {
+        return chat;
+      }
+
+      const allMessages = Array.isArray(chat.messages)
+        ? chat.messages.filter((message) => message != null)
+        : [];
+      const endIndex =
+        before != null && !Number.isNaN(Number(before))
+          ? Math.min(Number(before), allMessages.length)
+          : allMessages.length;
+      const startIndex = Math.max(0, endIndex - Number(limit));
+
+      return {
+        ...chat,
+        messages: allMessages.slice(startIndex, endIndex),
+        hasMore: startIndex > 0,
+        nextCursor: startIndex > 0 ? startIndex : null,
+      };
     })
     .catch((err) => {
       throw err;
