@@ -14,7 +14,16 @@ export const addMessageToChatQuery = async ({ poolCountry, chatId, message }) =>
   await getDBPool("clinicalDb", poolCountry).query(
     `
       UPDATE chat
-      SET messages = messages || $2::json
+      SET messages = CASE
+        -- A retried message (e.g. after a lost response on a bad connection) is stored only once
+        WHEN EXISTS (
+          SELECT 1 FROM unnest(messages) AS existing
+          WHERE existing->>'time' = $2::json->>'time'
+            AND existing->>'senderId' = $2::json->>'senderId'
+            AND existing->>'content' = $2::json->>'content'
+        ) THEN messages
+        ELSE messages || $2::json
+      END
       WHERE chat_id = $1
       RETURNING *;
     `,
